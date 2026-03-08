@@ -1,8 +1,10 @@
 import { useState } from "react";
 import authService from "../../services/auth.service";
 import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
@@ -10,19 +12,23 @@ export default function LoginPage() {
     password: ''
   });
 
-  const defaultPassword = 'password1234';
   const demoUsers = [
-    { email: 'admin@example.com', color: 'blue', role: 'ADMIN' },
-    { email: 'cashier@example.com', color: 'gray', role: 'CASHIER' },
-    { email: 'controller@example.com', color: 'red', role: 'CONTROLLER' },
+    { email: 'admin@example.com', color: 'blue', role: 'ADMIN',password:'admin1234' },
+    { email: 'cashier@example.com', color: 'gray', role: 'CASHIER',password:'cashier1234' },
+    { email: 'controller@example.com', color: 'red', role: 'CONTROLLER',password:'controller1234' },
   ];
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setErrorMessage('');
     try {
-      const response = await authService.login(formData);
-      console.log(response)
+      const {data,success} = await authService.login(formData);
+      const{user,token} = data;
+      if(user.firstConnection){
+        navigate('/first-connection');
+      }else{
+        navigate('/dashboard')
+      }
     } catch (error) {
       const errorObj = error as { message?: string }
       setErrorMessage(errorObj.message ? errorObj.message : 'Erreur lors de la connexion!')
@@ -109,11 +115,11 @@ export default function LoginPage() {
 
           <div className="grid grid-cols-1 gap-3">
 
-            {/* ADMIN */}
+            {/* MOCK Users */}
             {demoUsers.map(user => (
               <button
                 key={user.email}
-                onClick={() => { setFormData({ email: user.email, password: defaultPassword }) }}
+                onClick={() => { setFormData({ email: user.email, password: user.password }) }}
                 className={`p-3 rounded-lg text-center bg-${user.color}-100 border border-${user.color}-300 cursor-pointer hover:shadow`}>
                 <p className={`text-sm font-bold text-${user.color}-700`}>
                   {user.role}
