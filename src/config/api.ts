@@ -1,0 +1,19 @@
+//API configurations
+export const API_CONFIG = {
+    baseURL: import.meta.env.API_BASE_URL || 'http://localhost:4000/api',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+};
+
+//API endpoints
+export const API_ENDPOINTS = {
+    //authentication:
+    auth:{
+        login: '/auth/login',
+        logout: '/auth/logout',
+        refresh: '/auth/refresh',
+        me: '/auth/me'
+    },
+}
+
